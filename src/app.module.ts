@@ -3,8 +3,8 @@ import { AppController } from './app.controller';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [ChatModule],
   controllers: [AppController],
+  imports: [ChatModule],
   providers: [],
 })
 export class AppModule {}
