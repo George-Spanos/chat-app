@@ -8,6 +8,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     users: number = 0;
 
     async handleConnection() {
+        console.log('a user connected');
 
         // A client has connected
         this.users++;
@@ -18,6 +19,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     async handleDisconnect() {
+        console.log('a user disconnected');
 
         // A client has disconnected
         this.users--;
@@ -29,6 +31,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('chat')
     async onChat(client: Socket, @MessageBody() message: string) {
+        console.log('received message')
         client.broadcast.emit('chat', message);
     }
 
