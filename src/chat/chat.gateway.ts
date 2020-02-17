@@ -32,6 +32,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('chat')
     async onChat(client: Socket, @MessageBody() message: string) {
         console.log('received message')
+        console.log('client id: ', client.id)
         client.broadcast.emit('chat', message);
     }
 
