@@ -11,9 +11,6 @@
     "baseUrl": "./",
     "incremental": true
   },
-  "include": [
-    "package.json"
-  ],
   "exclude": [
     "node_modules",
     "dist"
