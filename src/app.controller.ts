@@ -6,6 +6,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return 'Hello this is an app'
+    return 'Hello this is an chat app'
   }
 }
