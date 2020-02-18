@@ -22,10 +22,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('users')
     async onUser(@ConnectedSocket() socket: Socket, @MessageBody() userDto: ActiveUser) {
-        if (!Array.isArray(this.users)) {
-            this.users = []
-        }
-        this.users.push({ name: userDto.fullName, imageURL: userDto.imageURL, socketId: socket.id });
+        this.users.push({ name: userDto.name, imageURL: userDto.imageURL, socketId: socket.id });
         this.server.emit('users', this.users);
     }
     @SubscribeMessage('chat')

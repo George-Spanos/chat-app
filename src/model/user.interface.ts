@@ -1,4 +1,4 @@
 export interface ActiveUser {
-    fullName: string;
+    name: string;
     imageURL: string;
 }
