@@ -1,35 +1,27 @@
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect, MessageBody, ConnectedSocket } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { Message } from './message.interface';
+import { Message } from '../model/message.interface';
+import { ActiveUser } from 'src/model/user.interface';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() server: Server;
-    users: number = 0;
+    users: ActiveUser[] = [];
 
     async handleConnection() {
         console.log('a user connected');
-
-        // A client has connected
-        this.users++;
-
-        // Notify connected clients of current users
-        this.server.emit('users', this.users);
-
     }
 
     async handleDisconnect() {
         console.log('a user disconnected');
-
-        // A client has disconnected
-        this.users--;
-
-        // Notify connected clients of current users
-        this.server.emit('users', this.users);
-
     }
 
+    @SubscribeMessage('users')
+    async onUser(@ConnectedSocket() socket: Socket, @MessageBody() userDto: ActiveUser) {
+        this.users.push(userDto);
+        socket.broadcast.emit('users', this.users);
+    }
     @SubscribeMessage('chat')
     async onChat(@ConnectedSocket() socket: Socket, @MessageBody() message: Message) {
         console.log('received message:', message)
