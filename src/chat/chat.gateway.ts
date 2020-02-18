@@ -16,8 +16,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async handleDisconnect(@ConnectedSocket() socket: Socket) {
         console.log('a user disconnected');
 
-        const index = this.users.findIndex(user => user.socketId === socket.id);
-        this.users.splice(index, 1);
+        this.users = this.users.filter(user => user.socketId !== socket.id);
         this.server.emit('users', this.users);
     }
 
