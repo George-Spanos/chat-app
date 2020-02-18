@@ -18,6 +18,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         const index = this.users.findIndex(user => user.socketId === socket.id);
         this.users.splice(index, 1);
+        this.server.emit('users', this.users);
     }
 
     @SubscribeMessage('users')
