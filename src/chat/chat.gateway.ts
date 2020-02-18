@@ -7,19 +7,22 @@ import { ActiveUser } from 'src/model/user.interface';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() server: Server;
-    users: ActiveUser[] = [];
+    users: Array<ActiveUser & { socket: Socket }> = [];
 
     async handleConnection() {
         console.log('a user connected');
     }
 
-    async handleDisconnect() {
+    async handleDisconnect(@ConnectedSocket() socket: Socket) {
         console.log('a user disconnected');
+
+        const index = this.users.findIndex(user => user.socket.id === socket.id);
+        this.users.splice(index, 1);
     }
 
     @SubscribeMessage('users')
     async onUser(@ConnectedSocket() socket: Socket, @MessageBody() userDto: ActiveUser) {
-        this.users.push(userDto);
+        this.users.push({ ...userDto, socket: socket });
         socket.broadcast.emit('users', this.users);
     }
     @SubscribeMessage('chat')
