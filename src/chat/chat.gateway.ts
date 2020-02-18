@@ -7,7 +7,7 @@ import { ActiveUser } from 'src/model/user.interface';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() server: Server;
-    users: Array<ActiveUser & { socket: Socket }> = [];
+    users: { name: string, imageURL: string, socketId: string }[] = [];
 
     async handleConnection() {
         console.log('a user connected');
@@ -16,14 +16,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async handleDisconnect(@ConnectedSocket() socket: Socket) {
         console.log('a user disconnected');
 
-        const index = this.users.findIndex(user => user.socket.id === socket.id);
+        const index = this.users.findIndex(user => user.socketId === socket.id);
         this.users.splice(index, 1);
     }
 
     @SubscribeMessage('users')
     async onUser(@ConnectedSocket() socket: Socket, @MessageBody() userDto: ActiveUser) {
-        this.users.push({ ...userDto, socket: socket });
-        socket.broadcast.emit('users', this.users);
+        if (!Array.isArray(this.users)) {
+            this.users = []
+        }
+        this.users.push({ name: userDto.fullName, imageURL: userDto.imageURL, socketId: socket.id });
+        this.server.emit('users', this.users);
     }
     @SubscribeMessage('chat')
     async onChat(@ConnectedSocket() socket: Socket, @MessageBody() message: Message) {
